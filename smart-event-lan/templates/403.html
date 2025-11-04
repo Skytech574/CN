@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>403 - Forbidden</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🚫 403 - Access Forbidden</h1>
+        <p style="color: red; font-size: 1.2em;">{{ error }}</p>
+        <p>Your IP address has been banned from accessing this network.</p>
+        <p>If you believe this is a mistake, contact the network administrator.</p>
+    </div>
+</body>
+</html>

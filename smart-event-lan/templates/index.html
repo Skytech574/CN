@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Event LAN - Home</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .chat-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .username-setup {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        #chat-box {
+            height: 300px;
+            overflow-y: auto;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+        }
+        .chat-message {
+            margin: 10px 0;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #667eea;
+        }
+        .chat-message strong {
+            color: #667eea;
+        }
+        .chat-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .chat-input button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .chat-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Smart Event LAN</h1>
+        
+        
+        <div class="features">
+            <div class="feature-card">
+                <h2>Quiz</h2>
+                <p>Take our interactive quiz</p>
+                <a href="/quiz" class="btn">Start Quiz</a>
+            </div>
+            
+            <div class="feature-card">
+                <h2>Live Slides</h2>
+                <p>View synchronized presentations</p>
+                <a href="/slides" class="btn">View Slides</a>
+            </div>
+            
+            <div class="feature-card">
+                <h2>Dashboard</h2>
+                <p>Real-time analytics</p>
+                <a href="/dashboard" class="btn">View Stats</a>
+            </div>
+            
+            <div class="feature-card">
+                <h2>Files</h2>
+                <p>Share and download files</p>
+                <a href="/files" class="btn">Browse Files</a>
+            </div>
+        </div>
+        
+        
+        <div class="chat-container">
+            <h2>💬 LAN Chat</h2>
+            
+            <div class="username-setup" id="username-setup">
+                <label for="username"><strong>Set Your Name:</strong></label>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <input type="text" id="username" placeholder="Enter your name" style="flex: 1; padding: 10px; border: 2px solid #667eea; border-radius: 5px;">
+                    <button onclick="setUsername()" class="btn" style="padding: 10px 20px;">Set Name</button>
+                </div>
+                <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                    This name will be used for chat and quiz. You can only set it once.
+                </p>
+            </div>
+            
+            <div id="chat-box"></div>
+            
+            <div class="chat-input" id="chat-input" style="display: none;">
+                <input type="text" id="message-input" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Connected Users: <span id="client-count">0</span></p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+        let currentUsername = localStorage.getItem('username');
+
+       
+        document.addEventListener('DOMContentLoaded', function() {
+            if (currentUsername && currentUsername.trim()) {
+               
+                document.getElementById('username').value = currentUsername;
+                document.getElementById('username').disabled = true;
+                document.getElementById('username-setup').style.opacity = '0.6';
+                document.getElementById('chat-input').style.display = 'flex';
+            }
+        });
+
+        function setUsername() {
+            const usernameInput = document.getElementById('username');
+            const username = usernameInput.value.trim();
+            
+            if (!username) {
+                alert('Please enter a name!');
+                return;
+            }
+            
+            
+            localStorage.setItem('username', username);
+            currentUsername = username;
+            
+            
+            usernameInput.disabled = true;
+            document.getElementById('username-setup').style.opacity = '0.6';
+            document.getElementById('chat-input').style.display = 'flex';
+            
+            alert(`Hello ${username}! Your name is set for chat and quiz.`);
+        }
+
+        function sendMessage() {
+            if (!currentUsername) {
+                alert('Please set your name first!');
+                return;
+            }
+            
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            
+            if (message) {
+                socket.emit('chat_message', {
+                    username: currentUsername,
+                    message: message
+                });
+                messageInput.value = '';
+            }
+        }
+
+        
+        socket.on('connect', function() {
+            console.log('Connected to server');
+        });
+
+        socket.on('client_count', function(data) {
+            document.getElementById('client-count').textContent = data.count;
+        });
+
+        socket.on('chat_message', function(data) {
+            const chatBox = document.getElementById('chat-box');
+            const msg = document.createElement('div');
+            msg.className = 'chat-message';
+            msg.innerHTML = `<strong>${data.username}</strong> <span style="color: #999; font-size: 0.85em;">[${data.timestamp}]</span>: ${data.message}`;
+            chatBox.appendChild(msg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+</body>
+</html>

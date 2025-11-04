@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Backups</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Backup Files</h1>
+        <p><a href="/admin/logs" class="btn">Back to Admin</a></p>
+        
+        <h2>Available Backups ({{ backups|length }})</h2>
+        <table>
+            <tr>
+                <th>Filename</th>
+                <th>Size</th>
+                <th>Created</th>
+                <th>Action</th>
+            </tr>
+            {% for backup in backups %}
+            <tr>
+                <td>{{ backup.name }}</td>
+                <td>{{ backup.size }}</td>
+                <td>{{ backup.created }}</td>
+                <td><a href="/admin/download-backup/{{ backup.name }}" class="btn">Download</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>

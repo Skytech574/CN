@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Quiz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .quiz-form {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 5px rgba(118, 75, 162, 0.5);
+        }
+        .form-group input:read-only {
+            background: #e8e8e8;
+            cursor: not-allowed;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+        .submit-btn:hover {
+            background: #764ba2;
+        }
+        .info-text {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+        .questions-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Event Quiz</h1>
+        <p>Test your knowledge about computer networks!</p>
+        
+        <div class="quiz-form">
+            <div class="info-text">
+                ℹ️ Your name from chat will be automatically filled. You cannot change it.
+            </div>
+            
+            <form method="POST" action="/quiz" id="quizForm">
+                <div class="form-group">
+                    <label for="name">Your Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                </div>
+                
+                <div class="questions-container">
+                    <div class="form-group">
+                        <label for="answer1">Q1: What is a LAN?</label>
+                        <input type="text" id="answer1" name="answer1" placeholder="Example: Local Area Network" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="answer2">Q2: What does IP stand for?</label>
+                        <input type="text" id="answer2" name="answer2" placeholder="Example: Internet Protocol" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="answer3">Q3: Name one transport protocol:</label>
+                        <input type="text" id="answer3" name="answer3" placeholder="Example: TCP, UDP, ICMP" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="submit-btn">Submit Quiz ✓</button>
+            </form>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/" class="btn">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedUsername = localStorage.getItem('username');
+            const nameInput = document.getElementById('name');
+
+            if (savedUsername && savedUsername.trim()) {
+                nameInput.value = savedUsername;
+                nameInput.readOnly = true;
+                nameInput.style.background = '#e8e8e8';
+            } else {
+                nameInput.placeholder = "Please set your name in chat first";
+                nameInput.style.borderColor = '#ff6b6b';
+            }
+        });
+
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            const nameInput = document.getElementById('name');
+            if (!nameInput.value.trim()) {
+                e.preventDefault();
+                alert('Please set your name in chat first!');
+            }
+        });
+    </script>
+</body>
+</html>

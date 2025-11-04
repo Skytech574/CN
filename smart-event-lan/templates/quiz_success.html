@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Submitted - Smart Event LAN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 50px auto;
+            text-align: center;
+        }
+        .success-icon {
+            font-size: 80px;
+            color: #28a745;
+            margin: 20px 0;
+        }
+        .success-message {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 3px solid #28a745;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .success-message h2 {
+            color: #155724;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .success-message p {
+            font-size: 1.2em;
+            color: #155724;
+            line-height: 1.6;
+        }
+        .user-name {
+            font-weight: bold;
+            color: #0d3d1a;
+            font-size: 1.4em;
+        }
+        .button-group {
+            margin-top: 30px;
+        }
+        .btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-container">
+            <div class="success-icon">✅</div>
+            
+            <h1>Quiz Submitted Successfully!</h1>
+            
+            <div class="success-message">
+                <h2>Thank You, <span class="user-name">{{ name }}</span>!</h2>
+                <p>Your quiz answers have been recorded and saved.</p>
+                <p>Your responses are now visible to the administrator.</p>
+                <p style="margin-top: 20px; font-size: 0.9em; color: #666;">
+                    Submission Time: {{ timestamp if timestamp else 'Just now' }}
+                </p>
+            </div>
+            
+            <div class="button-group">
+                <a href="/" class="btn btn-primary">🏠 Back to Home</a>
+                <a href="/dashboard" class="btn btn-secondary">📊 View Dashboard</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

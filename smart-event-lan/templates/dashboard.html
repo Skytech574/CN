@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analytics Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Real-Time Dashboard</h1>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Quiz Submissions</h3>
+                <p class="stat-number">{{ quiz_count }}</p>
+            </div>
+            
+            
+            
+            <div class="stat-card">
+                <h3>Connected Now</h3>
+                <p class="stat-number" id="connected">{{ connected }}</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Recent Connections</h3>
+                <p class="stat-number">{{ recent_connections }}</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Chat Messages</h3>
+                <p class="stat-number">{{ chat_count }}</p>
+            </div>
+        </div>
+        
+        <h2>Recent Quiz Responses</h2>
+        <table>
+            <tr>
+                <th>Name</th>
+                
+                <th>Time</th>
+            </tr>
+            {% for response in recent_responses %}
+            <tr>
+                <td>{{ response[0] }}</td>
+                <td>{{ response[1] }}/3</td>
+                <td>{{ response[2] }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3" style="text-align: center;">No quiz submissions yet</td>
+            </tr>
+            {% endfor %}
+        </table>
+        
+        <h2>Network Traffic Statistics</h2>
+        <table>
+            <tr>
+                <th>Packet Type</th>
+                <th>Count</th>
+            </tr>
+            {% for packet in traffic %}
+            <tr>
+                <td>{{ packet[0] }}</td>
+                <td>{{ packet[1] }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2" style="text-align: center;">No traffic data yet (run sniffer.py)</td>
+            </tr>
+            {% endfor %}
+        </table>
+        
+        <a href="/" class="btn">Back to Home</a>
+    </div>
+    
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+        
+        socket.on('client_count', function(data) {
+            document.getElementById('connected').textContent = data.count;
+        });
+        
+        socket.on('quiz_submitted', function(data) {
+            
+            setTimeout(() => location.reload(), 1000);
+        });
+        
+       
+        setTimeout(() => location.reload(), 30000);
+    </script>
+</body>
+</html>

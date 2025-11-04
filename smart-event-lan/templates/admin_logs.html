@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Logs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .admin-section { margin: 30px 0; }
+        .log-table { width: 100%; font-size: 12px; }
+        .ban-form { background: #ffe6e6; padding: 20px; border-radius: 10px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Admin Dashboard</h1>
+        <p><a href="/" class="btn">Back to Home</a> <a href="/admin/backups" class="btn">View Backups</a></p>
+        
+        <div class="admin-section">
+            <h2>Ban IP Address</h2>
+            <div class="ban-form">
+                <form method="POST" action="/admin/ban">
+                    <input type="text" name="ip" placeholder="IP Address" required>
+                    <input type="text" name="reason" placeholder="Reason (optional)">
+                    <button type="submit" class="btn">Ban IP</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Banned IPs ({{ banned|length }})</h2>
+            <table class="log-table">
+                <tr>
+                    <th>IP</th>
+                    <th>Reason</th>
+                    <th>Banned At</th>
+                    <th>Action</th>
+                </tr>
+                {% for ban in banned %}
+                <tr>
+                    <td>{{ ban[0] }}</td>
+                    <td>{{ ban[1] or 'No reason' }}</td>
+                    <td>{{ ban[2] }}</td>
+                    <td>
+                        <form method="POST" action="/admin/unban" style="display:inline;">
+                            <input type="hidden" name="ip" value="{{ ban[0] }}">
+                            <button type="submit" class="btn">Unban</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Recent Quiz Submissions ({{ quizzes|length }})</h2>
+            <table class="log-table">
+                <tr>
+                    <th>Name</th>
+                    <th>Score</th>
+                    <th>IP</th>
+                    <th>Time</th>
+                </tr>
+                {% for quiz in quizzes %}
+                <tr>
+                    <td>{{ quiz[0] }}</td>
+                    <td>{{ quiz[1] }}/3</td>
+                    <td>{{ quiz[2] }}</td>
+                    <td>{{ quiz[3] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Recent Chat Messages ({{ messages|length }})</h2>
+            <table class="log-table">
+                <tr>
+                    <th>Username</th>
+                    <th>Message</th>
+                    <th>IP</th>
+                    <th>Time</th>
+                </tr>
+                {% for msg in messages %}
+                <tr>
+                    <td>{{ msg[0] }}</td>
+                    <td>{{ msg[1] }}</td>
+                    <td>{{ msg[2] }}</td>
+                    <td>{{ msg[3] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Recent Connections ({{ connections|length }})</h2>
+            <table class="log-table">
+                <tr>
+                    <th>IP</th>
+                    <th>Username</th>
+                    <th>Action</th>
+                    <th>User Agent</th>
+                    <th>Time</th>
+                </tr>
+                {% for conn in connections %}
+                <tr>
+                    <td>{{ conn[0] }}</td>
+                    <td>{{ conn[1] or '-' }}</td>
+                    <td>{{ conn[3] }}</td>
+                    <td>{{ conn[2][:50] if conn[2] else '-' }}</td>
+                    <td>{{ conn[4] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</body>
+</html>

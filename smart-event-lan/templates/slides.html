@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Slides</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        
+
+        img {
+          width: 500px;
+          height: 300px;
+          object-fit: cover;
+          border-radius: 10px;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+          margin-bottom: 20px;
+        }
+
+        button {
+          padding: 10px 20px;
+          font-size: 16px;
+          border: none;
+          border-radius: 5px;
+          background-color: #007bff;
+          color: white;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+          background-color: #0056b3;
+        }
+
+        .container {
+          margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Live Presentation</h1>
+        
+       
+        <img id="imageDisplay" src="{{ url_for('static', filename='slide1.jpg') }}" alt="Slideshow Image">
+
+        <h2 id="slide-number">Slide {{ current_slide }}</h2>
+        
+
+        {% if is_presenter %}
+        <div class="slide-control">
+            <h3>Presenter Controls</h3>
+            <button onclick="changeSlide('prev')">⬅ Previous</button>
+            <button onclick="changeSlide('next')">Next ➡</button>
+        </div>
+        {% endif %}
+
+        <a href="/" class="btn">Back to Home</a>
+    </div>
+
+   
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        
+        const images = [
+  "{{ url_for('static', filename='slide1.jpg') }}",
+  "{{ url_for('static', filename='slide2.jpg') }}",
+  "{{ url_for('static', filename='slide3.jpg') }}",
+  "{{ url_for('static', filename='slide4.jpg') }}"
+];
+
+
+        let currentIndex = 0;
+
+        
+        socket.on('slide_change', function(data) {
+  const img = document.getElementById('imageDisplay');
+  img.src = images[data.slide];  
+  document.getElementById('slide-number').textContent = 'Slide ' + (data.slide + 1);
+});
+
+
+        
+        function changeSlide(action) {
+            if (action === 'next') {
+                currentIndex = (currentIndex + 1) % images.length;
+            } else if (action === 'prev') {
+                currentIndex = (currentIndex - 1 + images.length) % images.length;
+            }
+
+            
+            socket.emit('change_slide', { slide: currentIndex });
+        }
+    </script>
+    
+</body>
+</html>
